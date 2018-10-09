@@ -1,6 +1,5 @@
 module Node.BasicAuth
-  ( User
-  , Password
+  ( Credentials
   , authenticate
   ) where
 
@@ -20,19 +19,15 @@ import Node.HTTP (Request, requestHeaders)
 
 
 
-type User = String
-
-type Password = String
-
 type Credentials =
-  { user :: User
-  , pass :: Password
+  { user :: String
+  , pass :: String
   }
 
 
 
-authenticate :: User -> Password -> Request -> Effect Boolean
-authenticate user pass req =
+authenticate :: Credentials -> Request -> Effect Boolean
+authenticate { user, pass } req =
   case getAuthorization req of
     Nothing -> pure false
     Just h -> do
