@@ -1,0 +1,31 @@
+{
+  "name": "purescript-basic-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/oreshinya/purescript-basic-auth",
+  "authors": [
+    "Shinya Takahashi <s.takahashi313@gmail.com>"
+  ],
+  "description": "Basic authentication helper",
+  "keywords": [
+    "purescript",
+    "node",
+    "basic-auth"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oreshinya/purescript-basic-auth.git"
+  },
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-crypto": "^1.1.0",
+    "purescript-node-http": "^5.0.0"
+  }
+}
