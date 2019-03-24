@@ -6,8 +6,16 @@ Basic authentication helper.
 
 ## Installation
 
+### Bower
+
 ```
-bower install purescript-basic-auth
+$ bower install purescript-basic-auth
+```
+
+### Spago
+
+```
+$ spago install basic-auth
 ```
 
 ## Documentation
