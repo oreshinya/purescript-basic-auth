@@ -17,14 +17,10 @@ import Node.Crypto (timingSafeEqualString)
 import Node.Encoding (Encoding(..))
 import Node.HTTP (Request, requestHeaders)
 
-
-
 type Credentials =
   { user :: String
   , pass :: String
   }
-
-
 
 authenticate :: Credentials -> Request -> Effect Boolean
 authenticate { user, pass } req =
@@ -37,12 +33,8 @@ authenticate { user, pass } req =
          Just cred ->
            conj <$> timingSafeEqualString user cred.user <*> timingSafeEqualString pass cred.pass
 
-
-
 getAuthorization :: Request -> Maybe String
 getAuthorization req = lookup "authorization" $ requestHeaders req
-
-
 
 parse :: String -> Effect (Maybe Credentials)
 parse x =
@@ -61,12 +53,8 @@ parse x =
         _ -> pure Nothing
     _ -> pure Nothing
 
-
-
 credentialsRegex :: Regex
 credentialsRegex = unsafeRegex "^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$" noFlags
-
-
 
 userPassRegex :: Regex
 userPassRegex = unsafeRegex "^([^:]*):(.*)$" noFlags
