@@ -12,7 +12,7 @@ import Data.String.Regex.Flags (noFlags)
 import Data.String.Regex.Unsafe (unsafeRegex)
 import Effect (Effect)
 import Foreign.Object (lookup)
-import Node.Buffer (fromString, toString)
+import Node.Buffer (Buffer, fromString, toString)
 import Node.Crypto (timingSafeEqualString)
 import Node.Encoding (Encoding(..))
 import Node.HTTP (Request, requestHeaders)
@@ -42,7 +42,7 @@ parse x =
     Just ms ->
       case ms !! 1 of
         Just (Just token) -> do
-          decoded <- fromString token Base64 >>= toString UTF8
+          decoded <- (fromString token Base64 :: Effect Buffer) >>= toString UTF8
           case match userPassRegex decoded of
             Just ms' ->
               case ms' !! 1, ms' !! 2 of
