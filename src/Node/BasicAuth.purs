@@ -5,12 +5,14 @@ module Node.BasicAuth
 
 import Prelude
 
+import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Array.NonEmpty ((!!))
 import Data.Maybe (Maybe(..))
 import Data.String.Regex (Regex, match)
 import Data.String.Regex.Flags (noFlags)
 import Data.String.Regex.Unsafe (unsafeRegex)
 import Effect (Effect)
+import Effect.Class (liftEffect)
 import Foreign.Object (lookup)
 import Node.Buffer (Buffer, fromString, toString)
 import Node.Crypto (timingSafeEqualString)
@@ -23,35 +25,30 @@ type Credentials =
   }
 
 authenticate :: Credentials -> Request -> Effect Boolean
-authenticate { user, pass } req =
-  case getAuthorization req of
+authenticate cred req = do
+  result <- runMaybeT parse
+  case result of
     Nothing -> pure false
-    Just h -> do
-       mCred <- parse h
-       case mCred of
-         Nothing -> pure false
-         Just cred ->
-           conj <$> timingSafeEqualString user cred.user <*> timingSafeEqualString pass cred.pass
+    Just r ->
+      conj
+        <$> timingSafeEqualString cred.user r.user
+        <*> timingSafeEqualString cred.pass r.pass
+  where
+    parse = do
+      token <- MaybeT $ pure
+        $ getAuthorization req
+        >>= match credentialsRegex
+        >>= (_ !! 1) >>> join
+      decoded <- liftEffect
+        $ (fromString token Base64 :: Effect Buffer)
+        >>= toString UTF8
+      ms <- MaybeT $ pure $ match userPassRegex decoded
+      MaybeT $ pure $ { user: _, pass: _ }
+        <$> (join $ ms !! 1)
+        <*> (join $ ms !! 2)
 
 getAuthorization :: Request -> Maybe String
 getAuthorization req = lookup "authorization" $ requestHeaders req
-
-parse :: String -> Effect (Maybe Credentials)
-parse x =
-  case match credentialsRegex x of
-    Just ms ->
-      case ms !! 1 of
-        Just (Just token) -> do
-          decoded <- (fromString token Base64 :: Effect Buffer) >>= toString UTF8
-          case match userPassRegex decoded of
-            Just ms' ->
-              case ms' !! 1, ms' !! 2 of
-                Just (Just user), Just (Just pass) ->
-                  pure $ Just { user, pass }
-                _, _ -> pure Nothing
-            _ -> pure Nothing
-        _ -> pure Nothing
-    _ -> pure Nothing
 
 credentialsRegex :: Regex
 credentialsRegex = unsafeRegex "^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$" noFlags
