@@ -15,7 +15,8 @@ import Effect (Effect)
 import Effect.Class (liftEffect)
 import Foreign.Object (lookup)
 import Node.Buffer (Buffer, fromString, toString)
-import Node.Crypto (timingSafeEqualString)
+import Node.Crypto (randomBytes, timingSafeEqual)
+import Node.Crypto.Hmac (createHmac, update, digest)
 import Node.Encoding (Encoding(..))
 import Node.HTTP (Request, requestHeaders)
 
@@ -55,3 +56,13 @@ credentialsRegex = unsafeRegex "^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+
 
 userPassRegex :: Regex
 userPassRegex = unsafeRegex "^([^:]*):(.*)$" noFlags
+
+timingSafeEqualString :: String -> String -> Effect Boolean
+timingSafeEqualString x1 x2 = do
+  a1 <- fromString x1 UTF8
+  a2 <- fromString x2 UTF8
+  key <- randomBytes 32
+  b1 <- createHmac "sha256" key >>= update a1 >>= digest
+  b2 <- createHmac "sha256" key >>= update a2 >>= digest
+  tse <- timingSafeEqual b1 b2
+  pure $ tse && (x1 == x2)
