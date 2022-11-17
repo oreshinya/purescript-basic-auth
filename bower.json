@@ -1,31 +1,28 @@
 {
-  "name": "purescript-basic-auth",
-  "license": "MIT",
-  "homepage": "https://github.com/oreshinya/purescript-basic-auth",
-  "authors": [
-    "Shinya Takahashi <s.takahashi313@gmail.com>"
-  ],
-  "description": "Basic authentication helper",
-  "keywords": [
-    "purescript",
-    "node",
-    "basic-auth"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/oreshinya/purescript-basic-auth"
-  },
-  "moduleType": [
-    "node"
-  ],
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "output"
-  ],
-  "dependencies": {
-    "purescript-crypto": "^5.0.0",
-    "purescript-node-http": "^8.0.0"
-  }
+    "name": "purescript-basic-auth",
+    "license": [
+        "MIT"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/oreshinya/purescript-basic-auth"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "output"
+    ],
+    "dependencies": {
+        "purescript-arrays": "^v7.1.0",
+        "purescript-crypto": "^v5.0.1",
+        "purescript-effect": "^v4.0.0",
+        "purescript-foreign-object": "^v4.1.0",
+        "purescript-maybe": "^v6.0.0",
+        "purescript-node-buffer": "^v8.0.0",
+        "purescript-node-http": "^v8.0.0",
+        "purescript-prelude": "^v6.0.1",
+        "purescript-strings": "^v6.0.1",
+        "purescript-transformers": "^v6.0.0"
+    }
 }
